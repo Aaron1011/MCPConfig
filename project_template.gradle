@@ -23,6 +23,7 @@ dependencies {
 ext {
     DISTRO = '{distro}'
     INJECT = {inject}
+    INJECT_CLIENT = {inject_client}
     ASSETS = {assets}
     NATIVES = {natives}
 }
@@ -36,6 +37,15 @@ if (INJECT != null) {
                 exclude '**/client/**/*'
             else
                 exclude '**/server/**/*'
+        }
+    }
+}
+
+if (INJECT_CLIENT != null) {
+    sourceSets.create('inject_client') {
+        java {
+            srcdir INJECT_CLIENT
+            exclude 'package-info-template.java'
         }
     }
 }

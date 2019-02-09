@@ -140,6 +140,7 @@ subprojects {
         PATH_ASTYLE = file('astyle.cfg').exists() ? 'astyle.cfg' : rootProject.file('config/astyle.cfg').absolutePath
         PATH_INJECT = file('inject').exists() ? file('inject') : null
         PATH_INJECT_TEMPLATE = PATH_INJECT == null || !new File(PATH_INJECT, 'package-info-template.java').exists() ? null : new File(PATH_INJECT, 'package-info-template.java')
+        PATH_INJECT_CLIENT = file('inject_client').exists() ? file('inject_client') : null
         PROJECT_TEMPLATE = file('project_template.gradle').exists() ? file('project_template.gradle') : rootProject.file('project_template.gradle')
         PATH_TSRG = PATH_VERSION + 'joined.tsrg'
         PATH_ASSETS = PATH_BUILD + '/assets'
@@ -673,6 +674,8 @@ subprojects {
                         inputs.file downloadJson.dest
                     if (PATH_INJECT != null)
                         inputs.file PATH_INJECT
+                    if (PATH_INJECT_CLIENT != null)
+                        inputs.file PATH_INJECT_CLIENT
                     outputs.file dir
                     doLast {
                         def name = child.name.toLowerCase()
@@ -713,6 +716,7 @@ subprojects {
                         template = template.replace('{libraries}', 'compile ' + libraries.join('\n    compile '))
                         template = template.replace('{distro}', name)
                         template = template.replace('{inject}', PATH_INJECT == null ? null : "'${PATH_INJECT.absolutePath.replace('\\', '/')}'")
+                        template = template.replace('{inject_client}', PATH_INJECT_CLIENT == null ? null : "'${PATH_INJECT_CLIENT.absolutePath.replace('\\', '/')}'")
                         template = template.replace('{assets}', "'${file(PATH_ASSETS).absolutePath.replace('\\', '/')}'")
                         template = template.replace('{natives}', "'${file(PATH_NATIVES).absolutePath.replace('\\', '/')}'")
                         
@@ -810,6 +814,7 @@ subprojects {
                     exceptions 'config/exceptions.txt'
                     mappings 'config/joined.tsrg'
                     inject 'config/inject/'
+                    inject_client 'config/inject_client/'
                     statics 'config/static_methods.txt'
                     patches {
                         client 'patches/client/'
@@ -852,6 +857,12 @@ subprojects {
         if (PATH_INJECT != null && PATH_INJECT.exists()) {
             from(PATH_INJECT) {
                 into 'config/inject/'
+            }
+        }
+
+        if (PATH_INJECT_CLIENT != null && PATH_INJECT_CLIENT.exists()) {
+            from(PATH_INJECT_CLIENT) {
+                into 'config/inject_client/'
             }
         }
     }
